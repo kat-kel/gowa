@@ -4,17 +4,21 @@ FROM golang:1.25
 # set working directory
 WORKDIR /app
 
-# Copy the source code
+# copy go.mod and go.sum first to leverage build cache
+COPY go.mod go.sum ./
+
+# download dependencies only
+RUN go mod download
+
+# copy the rest of the source
 COPY . .
 
-# Download and install the dependencies
-RUN go get -d -v ./...
+# build the server, which lives under cmd/server
+WORKDIR /app/cmd/server
+RUN go build -o /app/api .
 
-# Build the Go app
-RUN go build -o api .
-
-#EXPOSE the port
+# expose the port used by the service
 EXPOSE 8000
 
-# Run the executable
-CMD ["./api"]
+# run the compiled binary
+CMD ["/app/api"]
