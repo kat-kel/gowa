@@ -16,19 +16,20 @@ services:
   
   frontend-test:
     container_name: frontend-test
-    image: nextapp:1.0.0
+    image: nextapp-test:1.0.0
     build:
       context: ./frontend
       dockerfile: next.dockerfile
       target: test
     environment:
       - NEXT_PUBLIC_API_URL=http://goapp:8000
+      - NODE_ENV=test
     depends_on:
       goapp:
         condition: service_healthy
     profiles:
       - test
-    command: jest --runInBand --forceExit --ci --detectOpenHandles
+    command: npm run test-ci
   
   goapp:
     container_name: goapp

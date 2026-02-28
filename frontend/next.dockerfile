@@ -34,9 +34,16 @@ RUN yarn build && ls -l /app/.next
 # RUN npm run build
 
 # Test stage for E2E testing
+# 1. Install ALL dependencies (including Jest)
+FROM base AS test-deps
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+# 2. The Test Stage
 FROM base AS test
 WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
+# Copy the node_modules that actually contain Jest
+COPY --from=test-deps /app/node_modules ./node_modules
 COPY . .
 ENV NODE_ENV=test
 CMD ["npm", "test-ci"]

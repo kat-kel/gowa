@@ -11,7 +11,7 @@
 ## Install
 
 ```bash
-docker compose build
+docker compose --profile test build
 ```
 
 ## Run
