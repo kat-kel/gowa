@@ -34,7 +34,7 @@ const UserInterface: React.FC<UserInterfaceProps> = ({ backendName }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${apiUrl}/api/${backendName}/users`);
+        const response = await axios.get(`${apiUrl}/api/${backendName}/actors`);
         setUsers(response.data.reverse());
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -48,7 +48,7 @@ const UserInterface: React.FC<UserInterfaceProps> = ({ backendName }) => {
   const createUser = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${apiUrl}/api/${backendName}/users`, newUser);
+      const response = await axios.post(`${apiUrl}/api/${backendName}/actors`, newUser);
       setUsers([response.data, ...users]);
       setNewUser({ name: '', voice: '' });
     } catch (error) {
@@ -60,7 +60,7 @@ const UserInterface: React.FC<UserInterfaceProps> = ({ backendName }) => {
   const handleUpdateUser = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      await axios.put(`${apiUrl}/api/${backendName}/users/${updateUser.id}`, { name: updateUser.name, voice: updateUser.voice });
+      await axios.put(`${apiUrl}/api/${backendName}/actors/${updateUser.id}`, { name: updateUser.name, voice: updateUser.voice });
       setUpdateUser({ id: '', name: '', voice: '' });
       setUsers(
         users.map((user) => {
@@ -78,7 +78,7 @@ const UserInterface: React.FC<UserInterfaceProps> = ({ backendName }) => {
   // Delete a user
   const deleteUser = async (userId: number) => {
     try {
-      await axios.delete(`${apiUrl}/api/${backendName}/users/${userId}`);
+      await axios.delete(`${apiUrl}/api/${backendName}/actors/${userId}`);
       setUsers(users.filter((user) => user.id !== userId));
     } catch (error) {
       console.error('Error deleting user:', error);

@@ -5,12 +5,31 @@ services:
     build:
       context: ./frontend
       dockerfile: next.dockerfile
+      target: runner
     ports:
       - "3000:3000"
     environment:
       - NEXT_PUBLIC_API_URL=http://localhost:8000
     depends_on:
-      - goapp
+      goapp:
+        condition: service_healthy
+  
+  frontend-test:
+    container_name: frontend-test
+    image: nextapp:1.0.0
+    build:
+      context: ./frontend
+      dockerfile: next.dockerfile
+      target: test
+    environment:
+      - NEXT_PUBLIC_API_URL=http://goapp:8000
+    depends_on:
+      goapp:
+        condition: service_healthy
+    profiles:
+      - test
+    command: jest --runInBand --forceExit --ci --detectOpenHandles
+  
   goapp:
     container_name: goapp
     image: kat-kel/goapp:1.0.0
@@ -22,7 +41,14 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 5s
+      timeout: 2s
+      retries: 5
+      start_period: 10s
   db:
     container_name: db
     image: postgres:15
@@ -35,6 +61,11 @@ services:
       - 5432:5432
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 2s
+      retries: 5
 
 volumes:
   pgdata:

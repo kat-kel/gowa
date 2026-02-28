@@ -14,6 +14,13 @@ import (
 func NewRouter(s *db.Store) http.Handler {
     router := mux.NewRouter()
 
+    // Health check endpoint for orchestration
+    router.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+        w.Header().Set("Content-Type", "application/json")
+        w.WriteHeader(http.StatusOK)
+        w.Write([]byte(`{"status":"healthy"}`))
+    }).Methods("GET")
+
     router.HandleFunc("/api/go/actors", handlers.GetActors(s)).Methods("GET")
     router.HandleFunc("/api/go/actors", handlers.CreateActor(s)).Methods("POST")
     router.HandleFunc("/api/go/actors/{id}", handlers.GetActor(s)).Methods("GET")
