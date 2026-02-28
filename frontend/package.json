@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "test": "jest --runInBand",
-    "test:ci": "jest --runInBand --forceExit --ci --detectOpenHandles",
+    "test-ci": "jest --runInBand --forceExit --ci --detectOpenHandles",
     "test:e2e": "docker compose --profile test up frontend-test --abort-on-container-exit",
     "test:e2e:down": "docker compose --profile test down"
   },
